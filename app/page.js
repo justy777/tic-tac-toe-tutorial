@@ -36,11 +36,12 @@ function Board({ xIsNext, squares, onPlay }) {
 
   const boardRows = [...Array(3)].map((_, i) => {
     const boardSquares = [...Array(3)].map((_, j) => {
+      let index = 3 * i + j;
       return (
         <Square
-          key={3 * i + j}
-          value={squares[3 * i + j]}
-          onSquareClick={() => handleClick(3 * i + j)}
+          key={index}
+          value={squares[index]}
+          onSquareClick={() => handleClick(index)}
         />
       );
     });

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { calculateWinner } from "../lib/game";
 
+const BOARD_SIZE = 3;
+
 function Square({ value, onSquareClick }) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -11,8 +13,23 @@ function Square({ value, onSquareClick }) {
   );
 }
 
+function Row({ rowIndex, squares, onSquareClick }) {
+  const rowSquares = [...Array(BOARD_SIZE)].map((_, colIndex) => {
+    const index = rowIndex * BOARD_SIZE + colIndex;
+    return (
+        <Square
+          key={index}
+          value={squares[index]}
+          onSquareClick={() => onSquareClick(index)}
+        />
+    );
+  });
+
+  return <div className="board-row">{rowSquares}</div>;
+}
+
 function Board({ xIsNext, squares, onPlay }) {
-  function handleClick(i) {
+  function handleSquareClick(i) {
     if (squares[i] || calculateWinner(squares)) {
       return;
     }
@@ -34,29 +51,14 @@ function Board({ xIsNext, squares, onPlay }) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
 
-  const boardRows = [...Array(3)].map((_, i) => {
-    const boardSquares = [...Array(3)].map((_, j) => {
-      let index = 3 * i + j;
-      return (
-        <Square
-          key={index}
-          value={squares[index]}
-          onSquareClick={() => handleClick(index)}
-        />
-      );
-    });
-
-    return (
-      <div key={i} className="board-row">
-        {boardSquares}
-      </div>
-    );
-  });
+  const rows = [...Array(BOARD_SIZE)].map((_, rowIndex) => (
+      <Row key={rowIndex} rowIndex={rowIndex} squares={squares} onSquareClick={handleSquareClick} />
+  ));
 
   return (
     <>
       <div className="status">{status}</div>
-      {boardRows}
+      {rows}
     </>
   );
 }
